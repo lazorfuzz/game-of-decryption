@@ -1,0 +1,18 @@
+.main {
+  display: flex;
+  flex-flow: column;
+  width: 640px;
+  max-width: 90%;
+  transition: all 150ms ease-in;
+}
+
+.imageInput {
+  margin-bottom: 1em;
+  text-align: center;
+  width: 400px;
+  max-width: 90%;
+}
+
+.heroTitle {
+  margin: 16px 16px !important;
+}
