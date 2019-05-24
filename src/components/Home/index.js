@@ -25,7 +25,7 @@ class Home extends Component {
     this.setState({ showReadStatus: false, readPayload: '' });
     const file = this.fileSelector.files[0];
     if (file.size > 2621440) {
-      this.props.onError('Image size too large. Max image size is 2.5 MB');
+      this.props.onError('Image size too large. Max image size is 2.5 MB. Did you remember to crop out everything but the text?');
       return;
     }
     const reader = new FileReader();
