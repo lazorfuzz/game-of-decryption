@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { withTheme } from '@material-ui/core/styles';
 import Input from '../Input';
 import Card from '../Card';
 import Hero from '../Hero';
@@ -53,6 +54,7 @@ class Home extends Component {
   }
 
   render() {
+    const { theme } = this.props;
     const { imageSrc, showReadStatus, readStatus, readPayload, readProgress } = this.state;
     return (
       <Wrapper>
@@ -74,7 +76,7 @@ class Home extends Component {
                 <React.Fragment>
                   <PreviewImage src={imageSrc} />
                   <ProgressContainer>
-                    <Progress progress={readProgress} />
+                    <Progress progress={readProgress} progressColor={theme.palette.primary.light} />
                   </ProgressContainer>
                 </React.Fragment>
               )
@@ -120,7 +122,7 @@ const ProgressContainer = styled.div`
 
 const Progress = styled.div`
   width: ${({ progress }) => `calc(${progress * 100}%)`};
-  background: #5675ff;
+  background: ${({ progressColor }) => progressColor};
   height: 1px;
   transition: 150ms ease-in;
 `;
@@ -143,4 +145,4 @@ const PreviewText = styled.pre`
   overflow-x: scroll;
 `;
 
-export default Home;
+export default withTheme(Home);
