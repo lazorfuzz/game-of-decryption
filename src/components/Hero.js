@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 const Hero = styled.div`
   width: 100%;
-  background: rgb(44,50,255);
-  background: linear-gradient(45deg, rgba(44,50,255,1) 0%, rgba(115,71,255,1) 55%, rgba(197,66,255,1) 100%);
+  background: rgb(44,124,255);
+  background: linear-gradient(45deg, rgba(44,124,255,1) 0%, rgba(118,71,255,1) 50%, rgba(255,127,66,1) 100%);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   color: white;
