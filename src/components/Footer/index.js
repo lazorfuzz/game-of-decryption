@@ -8,6 +8,7 @@ class Footer extends PureComponent {
     return (
       <Wrapper>
         <Text className="footerText">Made with <span role="img" aria-label="love">❤️</span> by IST440 Summer 2019 Team 3.</Text>
+        <Text className="footerText">View this project on <FooterLink target="_blank" href="https://github.com/lazorfuzz/game-of-decryption">GitHub.</FooterLink></Text>
       </Wrapper>
     );
   }
@@ -22,4 +23,8 @@ const Wrapper = styled.div`
   align-items: center;
   position: relative;
   bottom: 0;
+`;
+
+const FooterLink = styled.a`
+  color: white;
 `;

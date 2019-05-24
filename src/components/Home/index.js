@@ -5,6 +5,7 @@ import Input from '../Input';
 import Card from '../Card';
 import Hero from '../Hero';
 import Text, { Title } from '../Text';
+import { PreviewImage, PreviewText } from '../Preview';
 import { readImage } from './read-image';
 import './Home.css';
 
@@ -22,13 +23,13 @@ class Home extends Component {
 
   handleReadProgress = (readProgress) => this.setState({ readProgress });
 
-  previewImage = (evt) => {
+  previewImage = () => {
     this.setState({ showReadStatus: false, readPayload: '' });
     const file = this.fileSelector.files[0];
     if (!file) return;
     if (file.size > 3326850) {
       this.setState({ readProgress: 0, imageSrc: '', showReadStatus: false, readPayload: '' });
-      this.props.onError('Image size too large. Max image size is 3.3 MB. Did you remember to crop out everything but the text?');
+      this.props.onError('Image size too large. Max image size is 3.3 MB. Did you crop out everything but the text?');
       return;
     }
     const reader = new FileReader();
@@ -127,24 +128,6 @@ const Progress = styled.div`
   background: ${({ progressColor }) => progressColor};
   height: 1px;
   transition: 150ms ease-in;
-`;
-
-const PreviewImage = styled.img`
-  max-height: 100px;
-  max-width: 100%;
-  align-self: center;
-  margin-top: 1em;
-  border-radius: 4px;
-  box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
-`;
-
-const PreviewText = styled.pre`
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
-  padding: 8px 16px;
-  margin-top: 0;
-  background: #31465a;
-  overflow-x: scroll;
 `;
 
 export default withTheme(Home);
