@@ -1,5 +1,6 @@
 .loginInput {
-  width: 230px;
+  width: 400px;
+  max-width: 90%;
   padding-left: 8px;
 }
 

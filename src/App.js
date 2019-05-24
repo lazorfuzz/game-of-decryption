@@ -126,7 +126,7 @@ const LoginContainer = styled.div`
   display: flex;
   flex-flow: column;
   background: rgb(82, 94, 114);
-  width: 300px;
+  width: 450px;
   padding-bottom: 16px;
   max-width: 95%;
   max-height: 80%;
@@ -151,11 +151,13 @@ const InputContainer = styled.div`
   &:active {
     background: rgba(30, 43, 49, 0.9);
   }
-  width: 250px;
+  width: 450px;
+  max-width: 95%;
 `;
 
 const Form = styled.div`
   margin-top: 1em;
-  width: 300px;
+  width: 450px;
+  max-width: 90%;
   padding: 0 16px;
 `;
