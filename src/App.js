@@ -10,6 +10,7 @@ import './App.css';
 import { BaseInput } from './components/Input';
 import Hero from './components/Hero';
 import Home from './components/Home';
+import Footer from './components/Footer';
 import { Title } from './components/Text';
 import constants from './constants';
 
@@ -95,6 +96,7 @@ class App extends Component {
             <Home onError={this.handleError} />
           )
         }
+        <Footer />
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
@@ -131,6 +133,7 @@ const LoginContainer = styled.div`
   max-width: 95%;
   max-height: 80%;
   border-radius: 4px;
+  margin-bottom: 3rem;
   box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
 `;
 
