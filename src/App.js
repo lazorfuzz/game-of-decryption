@@ -32,7 +32,6 @@ class App extends Component {
 
   handleLogin = () => {
     const { username, password } = this.state;
-    console.log(constants.users[username]);
     if (username && password && constants.users[username] && constants.users[username].password === password) {
       this.setState({ pathname: 'home' });
     } else {
@@ -99,11 +98,11 @@ class App extends Component {
         <Footer />
         <Snackbar
           anchorOrigin={{
-            vertical: 'bottom',
+            vertical: 'top',
             horizontal: 'center',
           }}
           open={showSnack}
-          autoHideDuration={5000}
+          autoHideDuration={6000}
           onClose={this.handleSnackbarClose}
           ContentProps={{
             'aria-describedby': 'message-id',
