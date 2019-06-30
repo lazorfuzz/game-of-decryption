@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { withTheme } from '@material-ui/core/styles';
-import Input from '../Input';
+import { BaseInput } from '../Input';
 import Card from '../Card';
 import Hero from '../Hero';
 import Text, { Title } from '../Text';
 import { PreviewImage, PreviewText } from '../Preview';
 import { readImage } from './read-image';
+import { solveCipher } from '../../api';
 import './Home.css';
 
 class Home extends Component {
@@ -42,12 +43,17 @@ class Home extends Component {
       });
       const image = new Image();
       image.src = reader.result;
+      // Send image to OCR engine
       readImage(image, this.handleReadProgress)
         .then((result) => {
           this.setState({
             readPayload: result.text,
             readStatus: `Result (${result.confidence}% Confidence)`
           });
+          // Send OCR results to API backend for deciphering
+          solveCipher(result.text)
+            .then(console.log)
+            .catch(console.error);
         })
         .catch((err) => console.log('ERROR', err));
     }, false);
@@ -67,7 +73,7 @@ class Home extends Component {
           </Hero>
           <MainContainer>
             <Text>Select an image to begin.</Text>
-            <Input
+            <BaseInput
               className="imageInput"
               type="file"
               accept="image/x-png,image/jpeg"

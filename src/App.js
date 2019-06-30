@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar'
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import VPNKeyIcon from '@material-ui/icons/VpnKey';
+import EmailIcon from '@material-ui/icons/Email';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import muiTheme from './mui-theme';
 import './App.css';
@@ -12,7 +13,7 @@ import Hero from './components/Hero';
 import Home from './components/Home';
 import Footer from './components/Footer';
 import { Title } from './components/Text';
-import constants from './constants';
+import { login, signup } from './api';
 
 class App extends Component {
   constructor(props) {
@@ -22,7 +23,9 @@ class App extends Component {
       showSnack: false,
       snackbarText: 'Login failed.',
       username: '',
-      password: ''
+      password: '',
+      email: '',
+      creatingAccount: false
     };
   }
 
@@ -32,18 +35,54 @@ class App extends Component {
 
   handleLogin = () => {
     const { username, password } = this.state;
-    if (username && password && constants.users[username] && constants.users[username].password === password) {
-      this.setState({ pathname: 'home' });
-    } else {
-      this.setState({
-        showSnack: true,
-        snackbarText: 'Login failed.'
+    login(username, password)
+      .then((data) => {
+        if (data.token) {
+          this.setState({ pathname: 'home' });
+        } else {
+          this.setState({
+            showSnack: true,
+            snackbarText: 'Incorrect username or password!'
+          });
+        }
+      })
+      .catch((err) => {
+        const error = JSON.parse(err.response.body);
+        this.setState({ showSnack: true, snackbarText: error.message });
       });
-    }
+  }
+
+  handleSignUp = () => {
+    const { username, password, email } = this.state;
+    signup(username, email, password)
+      .then((data) => {
+        if (data.status && data.status === 'success') {
+          this.setState({
+            showSnack: true,
+            snackbarText: 'Account successfully created!',
+            creatingAccount: false
+          });
+          return;
+        }
+        this.setState({
+          showSnack: true,
+          snackbarText: 'Failed to create account.',
+          creatingAccount: false
+        });
+      })
+      .catch((err) => {
+        const error = JSON.parse(err.response.body);
+        this.setState({ showSnack: true, snackbarText: error.message });
+      });
+  }
+
+  handleCreateAccountToggle = () => {
+    const { creatingAccount } = this.state;
+    this.setState({ creatingAccount: !creatingAccount });
   }
 
   render() {
-    const { pathname, showSnack, snackbarText, username, password } = this.state;
+    const { pathname, showSnack, snackbarText, username, password, email, creatingAccount } = this.state;
     return (
       <MuiThemeProvider theme={muiTheme}>
         {
@@ -51,7 +90,7 @@ class App extends Component {
             <Wrapper>
               <LoginContainer>
                 <Hero>
-                  <Title className="heroTitle">Login</Title>
+                  <Title className="heroTitle">{creatingAccount ? 'Create My Account' : 'Login'}</Title>
                 </Hero>
                 <Form>
                   <InputContainer>
@@ -64,12 +103,26 @@ class App extends Component {
                       onChange={(evt) => this.setState({ username: evt.target.value })}
                     />
                   </InputContainer>
+                  {
+                    creatingAccount && (
+                      <InputContainer>
+                        <EmailIcon className="loginIcon" />
+                        <BaseInput
+                          className="loginInput"
+                          type="email"
+                          placeholder="Email"
+                          value={email}
+                          onChange={(evt) => this.setState({ email: evt.target.value })}
+                        />
+                      </InputContainer>
+                    )
+                  }
                   <InputContainer>
                     <VPNKeyIcon className="loginIcon" />
                     <BaseInput
                       className="loginInput"
                       type="password"
-                      placeholder="*******"
+                      placeholder="Password"
                       value={password}
                       onChange={(evt) => this.setState({ password: evt.target.value })}
                       onKeyUp={(evt) => {
@@ -77,14 +130,23 @@ class App extends Component {
                       }}
                     />
                   </InputContainer>
-                  <Button
-                    className="loginButton"
-                    variant="contained"
-                    color="primary"
-                    onClick={this.handleLogin}
-                  >
-                    Login
-                  </Button>
+                  <Actions>
+                    <Button
+                      className="loginButton"
+                      variant="contained"
+                      color="primary"
+                      onClick={creatingAccount ? this.handleSignUp : this.handleLogin}
+                    >
+                      {creatingAccount ? 'Create My Account' : 'Login'}
+                    </Button>
+                    <Button
+                      className="loginButton signupButton"
+                      color="primary"
+                      onClick={this.handleCreateAccountToggle}
+                    >
+                      {creatingAccount ? 'Login' : 'Create Account'}
+                    </Button>
+                  </Actions>
                 </Form>
               </LoginContainer>
             </Wrapper>
@@ -162,4 +224,9 @@ const Form = styled.div`
   width: 450px;
   max-width: 90%;
   padding: 0 16px;
+`;
+
+const Actions = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
