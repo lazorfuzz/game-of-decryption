@@ -4,8 +4,11 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar'
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import VPNKeyIcon from '@material-ui/icons/VpnKey';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import EmailIcon from '@material-ui/icons/Email';
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import muiTheme from './mui-theme';
 import './App.css';
 import { BaseInput } from './components/Input';
@@ -13,7 +16,7 @@ import Hero from './components/Hero';
 import Home from './components/Home';
 import Footer from './components/Footer';
 import { Title } from './components/Text';
-import { login, signup } from './api';
+import { login, signup, getOrganization } from './api';
 
 class App extends Component {
   constructor(props) {
@@ -25,8 +28,16 @@ class App extends Component {
       username: '',
       password: '',
       email: '',
-      creatingAccount: false
+      creatingAccount: false,
+      selectedOrganization: 1,
+      organizations: []
     };
+  }
+
+  componentDidMount() {
+    getOrganization('all')
+      .then(organizations => this.setState({ organizations }))
+      .catch(console.error);
   }
 
   handleSnackbarClose = () => this.setState({ showSnack: false });
@@ -56,17 +67,18 @@ class App extends Component {
   }
 
   handleSignUp = () => {
-    const { username, password, email } = this.state;
+    const { username, password, email, selectedOrganization } = this.state;
     if (!username || !password || !email) {
       return;
     }
-    signup(username, email, password)
+    signup(username, email, password, selectedOrganization)
       .then((data) => {
         if (data.status && data.status === 'success') {
           this.setState({
             showSnack: true,
             snackbarText: 'Account successfully created!',
-            creatingAccount: false
+            creatingAccount: false,
+            password: ''
           });
           return;
         }
@@ -88,7 +100,8 @@ class App extends Component {
   }
 
   render() {
-    const { pathname, showSnack, snackbarText, username, password, email, creatingAccount } = this.state;
+    const { classes } = this.props;
+    const { pathname, showSnack, snackbarText, username, password, email, creatingAccount, organizations, selectedOrganization } = this.state;
     return (
       <MuiThemeProvider theme={muiTheme}>
         {
@@ -132,10 +145,33 @@ class App extends Component {
                       value={password}
                       onChange={(evt) => this.setState({ password: evt.target.value })}
                       onKeyUp={(evt) => {
-                        if (evt.keyCode === 13) this.handleLogin();
+                        if (evt.keyCode === 13) creatingAccount ? this.handleSignUp() : this.handleLogin();
                       }}
                     />
                   </InputContainer>
+                  {
+                    creatingAccount && (
+                      <FormControl>
+                        <InputLabel htmlFor="age-native-simple" classes={{ root: classes.inputLabelRoot, focused: classes.inputLabelFocused }}>Organization</InputLabel>
+                        <Select
+                          classes={{ root: classes.orgSelectRoot }}
+                          native
+                          value={selectedOrganization}
+                          onChange={({ target }) => this.setState({ selectedOrganization: target.value })}
+                          inputProps={{
+                            name: 'organization',
+                            id: 'organization-native-simple',
+                          }}
+                        >
+                          {
+                            organizations.map((org) => (
+                              <option key={org.id} value={org.id}>{org.name}</option>
+                            ))
+                          }
+                        </Select>
+                      </FormControl>
+                    )
+                  }
                   <Actions>
                     <Button
                       className="loginButton"
@@ -182,7 +218,18 @@ class App extends Component {
   }
 }
 
-export default App;
+const styles = ({
+  inputLabelRoot: {
+    color: '#cecece',
+  },
+  inputLabelFocused: {
+    color: 'white !important',
+  },
+  orgSelectRoot: {
+    color: 'white',
+    width: 200
+  }
+});
 
 const Wrapper = styled.div`
   display: flex;
@@ -235,4 +282,7 @@ const Form = styled.div`
 const Actions = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-top: 16px;
 `;
+
+export default withStyles(styles)(App);
