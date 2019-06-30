@@ -35,6 +35,9 @@ class App extends Component {
 
   handleLogin = () => {
     const { username, password } = this.state;
+    if (!username || !password) {
+      return;
+    }
     login(username, password)
       .then((data) => {
         if (data.token) {
@@ -54,6 +57,9 @@ class App extends Component {
 
   handleSignUp = () => {
     const { username, password, email } = this.state;
+    if (!username || !password || !email) {
+      return;
+    }
     signup(username, email, password)
       .then((data) => {
         if (data.status && data.status === 'success') {
