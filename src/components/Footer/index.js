@@ -19,11 +19,15 @@ export default Footer;
 const Wrapper = styled.div`
   display: flex;
   flex-flow: column;
-  width: 100%;
   align-items: center;
   position: relative;
   bottom: 0;
-  padding-bottom: 8px;
+  padding-bottom: 16px;
+  margin-left: 96px;
+  @media (max-width: 768px) {
+    bottom: 56px;
+    margin: auto;
+  }
 `;
 
 const FooterLink = styled.a`

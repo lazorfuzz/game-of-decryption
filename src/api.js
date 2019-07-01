@@ -2,8 +2,10 @@ import request from 'request-promise';
 import constants from './constants';
 
 const headers = {
-  'Content-Type': 'application/json'
+  'Accept': 'application/json'
 };
+
+export let userOrganization = 'CIA';
 
 export async function login(username, password) {
   const res = await request.post({
@@ -16,6 +18,7 @@ export async function login(username, password) {
   const data = JSON.parse(res);
   if (data.token) {
     headers['Auth-Token'] = data.token;
+    userOrganization = data.organization;
   }
   return data;
 }
@@ -28,8 +31,7 @@ export async function signup(username, email, password, org_id) {
       username, password, email, role: 'standard', org_id
     }
   });
-  const data = JSON.parse(res);
-  return data;
+  return JSON.parse(res);
 }
 
 export async function getUser(id = 1) {
@@ -37,8 +39,7 @@ export async function getUser(id = 1) {
     uri: `${constants.apiUrl}/users${typeof id === 'number' ? `/${id}` : ''}`,
     headers
   });
-  const data = JSON.parse(res);
-  return data;
+  return JSON.parse(res);
 }
 
 export async function setUser(id, method = 'POST', form = {}) {
@@ -48,8 +49,7 @@ export async function setUser(id, method = 'POST', form = {}) {
     headers,
     form
   });
-  const data = JSON.parse(res);
-  return data;
+  return JSON.parse(res);
 }
 
 export async function getOrganization(name = 'all') {
@@ -57,8 +57,7 @@ export async function getOrganization(name = 'all') {
     uri: `${constants.apiUrl}/orgs${name !== 'all' ? `/${name}` : ''}`,
     headers
   });
-  const data = JSON.parse(res);
-  return data;
+  return JSON.parse(res);
 }
 
 export async function setOrganization(name, method = 'POST', form = {}) {
@@ -68,18 +67,24 @@ export async function setOrganization(name, method = 'POST', form = {}) {
     headers,
     form
   });
-  const data = JSON.parse(res);
-  return data;
+  return JSON.parse(res);
 }
 
-export async function solveCipher(cipher) {
+export async function solveCipher(cipher, lang = 'en') {
   const res = await request.post({
     uri: `${constants.apiUrl}/caesar`,
     headers,
     form: {
-      cipher
+      cipher, lang
     }
   });
-  const data = JSON.parse(res);
-  return data;
+  return JSON.parse(res);
+}
+
+export async function getNews(query = '_org') {
+  const res = await request.get({
+    uri: `${constants.apiUrl}/news/${query === '_org' ? userOrganization : query.replace(/ /g, '+')}`,
+    headers,
+  });
+  return JSON.parse(res);
 }

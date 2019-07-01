@@ -1,8 +1,8 @@
 .main {
   display: flex;
   flex-flow: column;
-  width: 640px;
-  max-width: 90%;
+  width: 960px;
+  max-width: 95%;
   transition: all 150ms ease-in;
 }
 

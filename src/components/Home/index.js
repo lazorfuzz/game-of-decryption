@@ -1,111 +1,99 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { withTheme } from '@material-ui/core/styles';
-import { BaseInput } from '../Input';
-import Card from '../Card';
-import Hero from '../Hero';
-import Text, { Title } from '../Text';
-import { PreviewImage, PreviewText } from '../Preview';
-import { readImage } from './read-image';
-import { solveCipher } from '../../api';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import HomeIcon from '@material-ui/icons/Home';
+import PanoIcon from '@material-ui/icons/Photo';
+import OrgIcon from '@material-ui/icons/People';
+import SettingsIcon from '@material-ui/icons/Settings';
+import MemberArea from './MemberArea';
+import Decipher from './Decipher';
+import Organization from './Organization';
+import Settings from './Settings';
+import { getOrganization, userOrganization } from '../../api';
 import './Home.css';
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      imageSrc: '',
-      showReadStatus: false,
-      readStatus: 'Reading image... Please wait.',
-      readProgress: 0,
-      readPayload: ''
+      page: window.location.hash || '#home',
+      organization: null
     };
   }
 
-  handleReadProgress = (readProgress) => this.setState({ readProgress });
+  componentDidMount() {
+    getOrganization(userOrganization)
+      .then(organization => this.setState({ organization }))
+      .catch(console.error);
+  }
 
-  previewImage = () => {
-    this.setState({ showReadStatus: false, readPayload: '' });
-    const file = this.fileSelector.files[0];
-    if (!file) return;
-    if (file.size > 3326850) {
-      this.setState({ readProgress: 0, imageSrc: '', showReadStatus: false, readPayload: '' });
-      this.props.onError('Image size too large. Max image size is 3.3 MB. Did you crop out everything but the text?');
-      return;
-    }
-    const reader = new FileReader();
-    reader.addEventListener('load', () => {
-      this.setState({
-        imageSrc: reader.result,
-        showReadStatus: true,
-        readStatus: 'Reading image... Please wait.',
-        readProgress: 0,
-      });
-      const image = new Image();
-      image.src = reader.result;
-      // Send image to OCR engine
-      readImage(image, this.handleReadProgress)
-        .then((result) => {
-          this.setState({
-            readPayload: result.text,
-            readStatus: `Result (${result.confidence}% Confidence)`
-          });
-          // Send OCR results to API backend for deciphering
-          solveCipher(result.text)
-            .then(console.log)
-            .catch(console.error);
-        })
-        .catch((err) => console.log('ERROR', err));
-    }, false);
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+  changePage = (page) => {
+    this.setState({ page });
+    window.location.hash = page;
   }
 
   render() {
-    const { theme } = this.props;
-    const { imageSrc, showReadStatus, readStatus, readPayload, readProgress } = this.state;
+    const { classes } = this.props;
+    const { page, organization } = this.state;
     return (
       <Wrapper>
-        <Card className="main">
-          <Hero>
-            <Title className="heroTitle">Image Deciphering Tool</Title>
-          </Hero>
-          <MainContainer>
-            <Text>Select an image to begin.</Text>
-            <BaseInput
-              className="imageInput"
-              type="file"
-              accept="image/x-png,image/jpeg"
-              onChange={this.previewImage}
-              ref={(input) => this.fileSelector = input}
-            />
-            {
-              imageSrc.length > 0 && (
-                <React.Fragment>
-                  <PreviewImage src={imageSrc} />
-                  <ProgressContainer>
-                    <Progress progress={readProgress} progressColor={theme.palette.primary.light} />
-                  </ProgressContainer>
-                </React.Fragment>
-              )
-            }
-            {
-              showReadStatus && (
-                <Text>{readStatus}</Text>
-              )
-            }
-            {
-              readPayload.length > 0 && (
-                <PreviewText>{readPayload}</PreviewText>
-              )
-            }
-          </MainContainer>
-        </Card>
+        <OptionsBar>
+          <Option>
+            <Tooltip title="Home">
+              <IconButton onClick={() => this.changePage('#home')} classes={{ root: page === '#home' ? classes.optionButtonSelected : classes.optionButton }}>
+                <HomeIcon />
+              </IconButton>
+            </Tooltip>
+          </Option>
+          <Option>
+            <Tooltip title="Decipher">
+              <IconButton onClick={() => this.changePage('#decipher')} classes={{ root: page === '#decipher' ? classes.optionButtonSelected : classes.optionButton }}>
+                <PanoIcon />
+              </IconButton>
+            </Tooltip>
+          </Option>
+          <Option>
+            <Tooltip title="Organization">
+              <IconButton onClick={() => this.changePage('#organization')} classes={{ root: page === '#organization' ? classes.optionButtonSelected : classes.optionButton }}>
+                <OrgIcon />
+              </IconButton>
+            </Tooltip>
+          </Option>
+          <Option>
+            <Tooltip title="Settings">
+              <IconButton onClick={() => this.changePage('#settings')} classes={{ root: page === '#settings' ? classes.optionButtonSelected : classes.optionButton }}>
+                <SettingsIcon />
+              </IconButton>
+            </Tooltip>
+          </Option>
+        </OptionsBar>
+        {
+          page === '#home' && <MemberArea />
+        }
+        {
+          page === '#decipher' && <Decipher />
+        }
+        {
+          page === '#organization' && <Organization organization={organization} />
+        }
+        {
+          page === '#settings' && <Settings />
+        }
       </Wrapper>
     );
   }
 }
+
+const styles = theme => ({
+  optionButtonSelected: {
+    color: 'white'
+  },
+  optionButton: {
+    color: 'rgba(0, 0, 0, .4)'
+  }
+})
 
 const Wrapper = styled.div`
   display: flex;
@@ -113,27 +101,48 @@ const Wrapper = styled.div`
   align-items: center;
   flex-flow: column;
   margin-bottom: 3rem;
+  margin-left: 96px;
+  transition: all 150ms ease-in;
+  @media (max-width: 960px) {
+    width: calc(100% - 96px);
+  }
+  @media (max-width: 768px) {
+    margin: auto;
+    width: 100%;
+    margin-bottom: 96px;
+    padding-top: 1em;
+  }
 `;
 
-const MainContainer = styled.div`
-  padding: 8px 16px;
+const OptionsBar = styled.div`
   display: flex;
+  z-index: 5;
+  transition: width 150ms ease-in;
   flex-flow: column;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 96px;
+  background: rgb(82, 94, 114);
+  box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
+  @media (max-width: 768px) {
+    bottom: 0;
+    top: auto;
+    left: 0;
+    width: 100%;
+    height: 56px;
+    flex-flow: row;
+    justify-content: space-around;
+  }
 `;
 
-const ProgressContainer = styled.div`
-  margin-left: -16px;
-  margin-top: 1.5em;
-  background: rgb(62, 77, 102);
-  height: 1px;
-  width: calc(100% + 32px);
+const Option = styled.div`
+margin: 24px 0;
+@media (max-width: 768px) {
+  margin: 0 18px;
+}
 `;
 
-const Progress = styled.div`
-  width: ${({ progress }) => `calc(${progress * 100}%)`};
-  background: ${({ progressColor }) => progressColor};
-  height: 1px;
-  transition: 150ms ease-in;
-`;
-
-export default withTheme(Home);
+export default withStyles(styles)(Home);

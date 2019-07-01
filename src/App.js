@@ -107,7 +107,7 @@ class App extends Component {
         {
           pathname === 'login' && (
             <Wrapper>
-              <LoginContainer>
+              <LoginContainer className="animated fadeIn">
                 <Hero>
                   <Title className="heroTitle">{creatingAccount ? 'Create My Account' : 'Login'}</Title>
                 </Hero>
@@ -117,6 +117,7 @@ class App extends Component {
                     <BaseInput
                       className="loginInput"
                       type="text"
+                      maxLength={80}
                       placeholder="Username"
                       value={username}
                       onChange={(evt) => this.setState({ username: evt.target.value })}
