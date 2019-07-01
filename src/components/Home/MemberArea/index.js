@@ -21,7 +21,9 @@ class MemberArea extends Component {
 
   generateNews = () => this.state.news.map((n) => (
     <NewsItem key={n.title} className="animated fadeIn" onClick={() => window.open(n.link)}>
-      <NewsDate>{new Date(n.date).toLocaleDateString()}</NewsDate>
+      <DateContainer>
+        <NewsDate>{new Date(n.date).toLocaleDateString()}</NewsDate>
+      </DateContainer>
       <NewsTitle>{n.title}</NewsTitle>
     </NewsItem>
   ));
@@ -71,14 +73,19 @@ const NewsItem = styled.div`
   }
 `;
 
+const DateContainer = styled.div`
+  min-width: 76px;
+  margin-right: 16px;
+`;
+
 const NewsDate = styled.span`
   color: rgba(255, 255, 255, .3);
-  margin-right: 16px;
 `;
 
 const NewsTitle = styled.span`
   color: white;
   cursor: pointer;
+  margin: .5em 0;
 `;
 
 export default MemberArea;

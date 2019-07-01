@@ -22,7 +22,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pathname: 'login',
+      pathname: 'home',
       showSnack: false,
       snackbarText: 'Login failed.',
       username: '',
@@ -200,7 +200,7 @@ class App extends Component {
             <Home onError={this.handleError} />
           )
         }
-        <Footer />
+        <Footer shifted={pathname === 'home'} />
         <Snackbar
           anchorOrigin={{
             vertical: 'top',
@@ -237,6 +237,7 @@ const Wrapper = styled.div`
   padding-top: 3rem;
   align-items: center;
   flex-flow: column;
+  margin-bottom: 3rem;
 `;
 
 const LoginContainer = styled.div`
