@@ -11,7 +11,7 @@ import MemberArea from './MemberArea';
 import Decipher from './Decipher';
 import Organization from './Organization';
 import Settings from './Settings';
-import { getOrganization, userOrganization } from '../../api';
+import { getOrganization, currentUser } from '../../api';
 import './Home.css';
 
 class Home extends Component {
@@ -24,7 +24,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    getOrganization(userOrganization)
+    getOrganization(currentUser.organization)
       .then(organization => this.setState({ organization }))
       .catch(console.error);
   }
@@ -79,7 +79,7 @@ class Home extends Component {
           page === '#organization' && <Organization organization={organization} />
         }
         {
-          page === '#settings' && <Settings />
+          page === '#settings' && <Settings onLogOut={this.props.onLogOut} />
         }
       </Wrapper>
     );

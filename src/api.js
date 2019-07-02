@@ -5,7 +5,7 @@ const headers = {
   'Accept': 'application/json'
 };
 
-export let userOrganization = 'CIA';
+export let currentUser = {};
 
 export async function login(username, password) {
   const res = await request.post({
@@ -18,7 +18,7 @@ export async function login(username, password) {
   const data = JSON.parse(res);
   if (data.token) {
     headers['Auth-Token'] = data.token;
-    userOrganization = data.organization;
+    currentUser = data.user;
   }
   return data;
 }
@@ -83,7 +83,7 @@ export async function solveCipher(cipher, lang = 'en') {
 
 export async function getNews(query = '_org') {
   const res = await request.get({
-    uri: `${constants.apiUrl}/news/${query === '_org' ? userOrganization : query.replace(/ /g, '+')}`,
+    uri: `${constants.apiUrl}/news/${query === '_org' ? currentUser.organization : query.replace(/ /g, '+')}`,
     headers,
   });
   return JSON.parse(res);

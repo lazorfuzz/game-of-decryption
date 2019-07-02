@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Card from '../../Card';
 import Loading from '../../Loading';
 import Text, { Title } from '../../Text';
-import { userOrganization } from '../../../api';
+import { currentUser } from '../../../api';
 
 
 class Organization extends Component {
@@ -13,7 +13,7 @@ class Organization extends Component {
         <Title>My Organization</Title>
         <Card>
           <CardBody>
-            <Text>{userOrganization}</Text>
+            <Text>{currentUser.organization}</Text>
           </CardBody>
         </Card>
       </Container>

@@ -22,7 +22,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pathname: 'home',
+      pathname: 'login',
       showSnack: false,
       snackbarText: 'Login failed.',
       username: '',
@@ -65,6 +65,8 @@ class App extends Component {
         this.setState({ showSnack: true, snackbarText: error.message });
       });
   }
+
+  handleLogOut = () => this.setState({ pathname: 'login', username: '', password: '', email: '' });
 
   handleSignUp = () => {
     const { username, password, email, selectedOrganization } = this.state;
@@ -197,7 +199,7 @@ class App extends Component {
         }
         {
           pathname === 'home' && (
-            <Home onError={this.handleError} />
+            <Home onError={this.handleError} onLogOut={this.handleLogOut} />
           )
         }
         <Footer shifted={pathname === 'home'} />
