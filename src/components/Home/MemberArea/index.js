@@ -62,7 +62,9 @@ const NewsContainer = styled.div`
 
 const NewsItem = styled.div`
   display: flex;
-  padding: 16px;
+  padding: 0 16px;
+  min-height: 50px;
+  align-items: center;
   border-bottom: 1px solid rgb(62, 77, 102);
   transition: all 150ms ease-in;
   cursor: pointer;
@@ -70,6 +72,9 @@ const NewsItem = styled.div`
     background: rgb(88, 101, 122);
     box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
     border-bottom: 1px solid transparent;
+  }
+  @media (max-width: 768px) {
+    padding: 16px 16px;
   }
 `;
 
@@ -85,7 +90,6 @@ const NewsDate = styled.span`
 const NewsTitle = styled.span`
   color: white;
   cursor: pointer;
-  margin: .5em 0;
 `;
 
 export default MemberArea;

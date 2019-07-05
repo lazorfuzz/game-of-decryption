@@ -17,7 +17,7 @@ export async function login(username, password) {
   });
   const data = JSON.parse(res);
   if (data.token) {
-    headers['Auth-Token'] = data.token;
+    headers['Authorization'] = data.token;
     currentUser = data.user;
   }
   return data;
