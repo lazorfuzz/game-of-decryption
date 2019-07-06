@@ -61,6 +61,10 @@ class App extends Component {
         }
       })
       .catch((err) => {
+        if (!err.response) {
+          this.setState({ showSnack: true, snackbarText: err.message });
+          return;
+        }
         const error = JSON.parse(err.response.body);
         this.setState({ showSnack: true, snackbarText: error.message });
       });
