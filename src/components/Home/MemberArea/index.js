@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import Card from '../../Card';
 import { getNews } from '../../../api';
+import { shortenText } from '../../../util';
 import Loading from '../../Loading';
 import { Title } from '../../Text';
+import DesktopTabletView from '../../DesktopTabletView';
+import MobileView from '../../MobileView';
 
 class MemberArea extends Component {
   constructor(props) {
@@ -24,7 +27,8 @@ class MemberArea extends Component {
       <DateContainer>
         <NewsDate>{new Date(n.date).toLocaleDateString()}</NewsDate>
       </DateContainer>
-      <NewsTitle>{n.title}</NewsTitle>
+      <DesktopTabletView><NewsTitle>{n.title}</NewsTitle></DesktopTabletView>
+      <MobileView><NewsTitle>{shortenText(n.title, 50)}</NewsTitle></MobileView>
     </NewsItem>
   ));
 
@@ -58,6 +62,7 @@ const NewsContainer = styled.div`
   display: flex;
   flex-flow: column;
   overflow-y: scroll;
+  overflow-x: hidden;
 `;
 
 const NewsItem = styled.div`
@@ -74,7 +79,7 @@ const NewsItem = styled.div`
     border-bottom: 1px solid transparent;
   }
   @media (max-width: 768px) {
-    padding: 16px 16px;
+    padding: 8px 16px;
   }
 `;
 
@@ -91,5 +96,7 @@ const NewsTitle = styled.span`
   color: white;
   cursor: pointer;
 `;
+
+
 
 export default MemberArea;

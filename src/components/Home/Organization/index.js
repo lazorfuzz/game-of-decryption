@@ -12,7 +12,7 @@ class Organization extends Component {
       <Container className="main">
         <Title>My Organization</Title>
         <Card>
-          <CardBody>
+          <CardBody className="animated fadeIn">
             <Text>{currentUser.organization}</Text>
           </CardBody>
         </Card>

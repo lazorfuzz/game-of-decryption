@@ -35,7 +35,7 @@ class Settings extends Component {
       <Container className="main">
         <Title>Account</Title>
         <Card>
-          <CardBody>
+          <CardBody className="animated fadeIn">
             <Button onClick={() => this.setState({ confirmDeleteAccount: true })} variant="contained" classes={{ root: classes.deleteButton }}>Delete My Account</Button>
           </CardBody>
         </Card>

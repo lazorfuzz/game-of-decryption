@@ -52,6 +52,35 @@ export async function setUser(id, method = 'POST', form = {}) {
   return JSON.parse(res);
 }
 
+export async function checkCipherSolutionExists(cipher) {
+  const res = await request({
+    uri: `${constants.apiUrl}/solutions`,
+    method: 'POST',
+    headers,
+    form: { cipher }
+  });
+  return JSON.parse(res);
+}
+
+export async function getSavedSolutions() {
+  const res = await request.get({
+    uri: `${constants.apiUrl}/saved_solutions`,
+    headers
+  });
+  return JSON.parse(res);
+}
+
+export async function setSavedSolution(cipher, lang, solution) {
+  const res = await request.post({
+    uri: `${constants.apiUrl}/saved_solutions`,
+    headers,
+    form: {
+      cipher, lang, solution, user_id: currentUser.id
+    }
+  });
+  return JSON.parse(res);
+}
+
 export async function getOrganization(name = 'all') {
   const res = await request.get({
     uri: `${constants.apiUrl}/orgs${name !== 'all' ? `/${name}` : ''}`,
