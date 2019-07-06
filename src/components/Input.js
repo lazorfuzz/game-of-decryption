@@ -27,7 +27,28 @@ const BaseInput = styled.input`
   background: transparent;
 `;
 
+const InputContainer = styled.div`
+  display: flex;
+  flex-flow: row;
+  border-radius: 4px;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin: 8px 0;
+  background: rgba(30, 43, 49, 0.7);
+  border-radius: 4px;
+  padding: 8px;
+  transition: 150ms ease-in;
+  &:hover {
+    background: rgba(30, 43, 49, 0.8);
+  }
+  &:active {
+    background: rgba(30, 43, 49, 0.9);
+  }
+  width: 450px;
+  max-width: 95%;
+`;
+
 export default Input;
 
-export { BaseInput };
+export { BaseInput, InputContainer };
 

@@ -73,13 +73,19 @@ class Home extends Component {
           page === '#home' && <MemberArea />
         }
         {
-          page === '#decipher' && <Decipher />
+          page === '#decipher' && <Decipher onError={this.props.onError} />
         }
         {
           page === '#organization' && <Organization organization={organization} />
         }
         {
-          page === '#settings' && <Settings onLogOut={this.props.onLogOut} />
+          page === '#settings' && 
+          <Settings
+            changePage={this.changePage}
+            organizations={this.props.organizations}
+            onLogOut={this.props.onLogOut}
+            onError={this.props.onError}
+          />
         }
       </Wrapper>
     );

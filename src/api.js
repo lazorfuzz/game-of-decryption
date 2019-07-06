@@ -49,7 +49,11 @@ export async function setUser(id, method = 'POST', form = {}) {
     headers,
     form
   });
-  return JSON.parse(res);
+  const data = JSON.parse(res);
+  if (id === currentUser.id) {
+    currentUser = data;
+  }
+  return data;
 }
 
 export async function checkCipherSolutionExists(cipher) {

@@ -11,7 +11,7 @@ import EmailIcon from '@material-ui/icons/Email';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import muiTheme from './mui-theme';
 import './App.css';
-import { BaseInput } from './components/Input';
+import { BaseInput, InputContainer } from './components/Input';
 import Hero from './components/Hero';
 import Home from './components/Home';
 import Footer from './components/Footer';
@@ -132,6 +132,7 @@ class App extends Component {
                         <BaseInput
                           className="loginInput"
                           type="email"
+                          maxLength={80}
                           placeholder="Email"
                           value={email}
                           onChange={(evt) => this.setState({ email: evt.target.value })}
@@ -144,6 +145,7 @@ class App extends Component {
                     <BaseInput
                       className="loginInput"
                       type="password"
+                      maxLength={80}
                       placeholder="Password"
                       value={password}
                       onChange={(evt) => this.setState({ password: evt.target.value })}
@@ -155,7 +157,7 @@ class App extends Component {
                   {
                     creatingAccount && (
                       <FormControl>
-                        <InputLabel htmlFor="age-native-simple" classes={{ root: classes.inputLabelRoot, focused: classes.inputLabelFocused }}>Organization</InputLabel>
+                        <InputLabel htmlFor="organization-native-simple" classes={{ root: classes.inputLabelRoot, focused: classes.inputLabelFocused }}>Organization</InputLabel>
                         <Select
                           classes={{ root: classes.orgSelectRoot }}
                           native
@@ -199,7 +201,7 @@ class App extends Component {
         }
         {
           pathname === 'home' && (
-            <Home onError={this.handleError} onLogOut={this.handleLogOut} />
+            <Home onError={this.handleError} organizations={organizations} onLogOut={this.handleLogOut} />
           )
         }
         <Footer shifted={pathname === 'home'} />
@@ -253,27 +255,6 @@ const LoginContainer = styled.div`
   border-radius: 4px;
   margin-bottom: 3rem;
   box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  flex-flow: row;
-  border-radius: 4px;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  margin: 8px 0;
-  background: rgba(30, 43, 49, 0.7);
-  border-radius: 4px;
-  padding: 8px;
-  transition: 150ms ease-in;
-  &:hover {
-    background: rgba(30, 43, 49, 0.8);
-  }
-  &:active {
-    background: rgba(30, 43, 49, 0.9);
-  }
-  width: 450px;
-  max-width: 95%;
 `;
 
 const Form = styled.div`

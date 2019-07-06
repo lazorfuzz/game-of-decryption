@@ -51,9 +51,13 @@ class Decipher extends Component {
           // Send OCR results to API backend for deciphering
           solveCipher(result.text)
             .then(console.log)
-            .catch(console.error);
+            .catch((err) => {
+              if (err.response) {
+                this.props.onError(`DECIPHERING ERROR: ${JSON.parse(err.response.body).message}`);
+              }
+            });
         })
-        .catch((err) => console.log('ERROR', err));
+        .catch((err) => this.props.onError(err));
     }, false);
     if (file) {
       reader.readAsDataURL(file);

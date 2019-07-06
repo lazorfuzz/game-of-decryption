@@ -8,4 +8,12 @@ const Card = styled.div`
   max-width: 100%;
 `;
 
+const HR = styled.div`
+  border-bottom: 2px rgb(62, 77, 102) solid;
+  margin: 16px -16px;
+  margin-top: 32px;
+`;
+
+export { HR };
+
 export default Card;
