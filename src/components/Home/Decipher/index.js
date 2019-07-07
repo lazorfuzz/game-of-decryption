@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme, withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import { BaseInput } from '../../Input';
 import Card from '../../Card';
 import Text, { Title } from '../../Text';
-import { PreviewImage, PreviewText } from '../../Preview';
+import { PreviewImage, PreviewText, PreviewPre } from '../../Preview';
 import { readImage } from '../read-image';
 import { solveCipher } from '../../../api';
 
@@ -17,17 +18,18 @@ class Decipher extends Component {
       readStatus: 'Reading image... Please wait.',
       readProgress: 0,
       readPayload: '',
+      decipheredText: ''
     };
   }
 
   handleReadProgress = (readProgress) => this.setState({ readProgress });
 
   previewImage = () => {
-    this.setState({ showReadStatus: false, readPayload: '' });
+    this.setState({ showReadStatus: false, readPayload: '', decipheredText: '' });
     const file = this.fileSelector.files[0];
     if (!file) return;
     if (file.size > 3326850) {
-      this.setState({ readProgress: 0, imageSrc: '', showReadStatus: false, readPayload: '' });
+      this.setState({ readProgress: 0, imageSrc: '', showReadStatus: false, readPayload: '', decipheredText: '' });
       this.props.onError('Image size too large. Max image size is 3.3 MB. Did you crop out everything but the text?');
       return;
     }
@@ -46,16 +48,8 @@ class Decipher extends Component {
         .then((result) => {
           this.setState({
             readPayload: result.text,
-            readStatus: `Result (${result.confidence}% Confidence)`
+            readStatus: `OCR Result (${result.confidence}% Confidence)`
           });
-          // Send OCR results to API backend for deciphering
-          solveCipher(result.text)
-            .then(console.log)
-            .catch((err) => {
-              if (err.response) {
-                this.props.onError(`DECIPHERING ERROR: ${JSON.parse(err.response.body).message}`);
-              }
-            });
         })
         .catch((err) => this.props.onError(err));
     }, false);
@@ -64,9 +58,25 @@ class Decipher extends Component {
     }
   }
 
+  handleDecipher = () => {
+    const { readPayload } = this.state;
+    // Send OCR results to API backend for deciphering
+    solveCipher(readPayload)
+    .then((res) => this.setState({ decipheredText: res.result }))
+    .catch((err) => {
+      if (err.response) {
+        const errMessage = JSON.parse(err.response.body).message;
+        this.props.onError(`Deciphering Error - ${errMessage}`);
+        this.setState({ decipheredText: errMessage});
+      }
+    });
+  }
+
+  handleCipherTextChange = ({ target }) => this.setState({ readPayload: target.value });
+
   render() {
-    const { theme } = this.props;
-    const { imageSrc, showReadStatus, readStatus, readPayload, readProgress } = this.state;
+    const { theme, classes } = this.props;
+    const { imageSrc, showReadStatus, readStatus, readPayload, readProgress, decipheredText } = this.state;
     return (
       <Container className="main">
         <Title>Image Decipher</Title>
@@ -97,15 +107,42 @@ class Decipher extends Component {
             }
             {
               readPayload.length > 0 && (
-                <PreviewText>{readPayload}</PreviewText>
+                <React.Fragment>
+                  <PreviewText value={readPayload} onChange={this.handleCipherTextChange} />
+                  <Button variant="contained" color="primary" classes={{ root: classes.submitButton }} onClick={this.handleDecipher}>Decipher</Button>
+                </React.Fragment>
               )
             }
           </MainContainer>
         </Card>
+        {
+          decipheredText.length > 0 && (
+            <ResultsContainer className="animated fadeInUp">
+              <Title>Decipher Result</Title>
+              <Card>
+                <MainContainer className="animated fadeIn">
+                  <PreviewPre>
+                    {decipheredText}
+                  </PreviewPre>
+                  <Button variant="contained" color="primary">Save</Button>
+                </MainContainer>
+              </Card>
+            </ResultsContainer>
+          )
+        }
       </Container>
     );
   }
 }
+
+const styles = ({
+  submitButton: {
+    width: '30%',
+    '@media (max-width: 768px)': {
+      width: '100%'
+    },
+  }
+});
 
 const Container = styled.div`
   display: flex;
@@ -116,6 +153,10 @@ const MainContainer = styled.div`
   padding: 8px 16px;
   display: flex;
   flex-flow: column;
+`;
+
+const ResultsContainer = styled.div`
+  margin-top: 1.5em;
 `;
 
 const ProgressContainer = styled.div`
@@ -133,4 +174,4 @@ const Progress = styled.div`
   transition: 150ms ease-in;
 `;
 
-export default withTheme(Decipher);
+export default withStyles(styles)(withTheme(Decipher));

@@ -42,7 +42,12 @@ class App extends Component {
 
   handleSnackbarClose = () => this.setState({ showSnack: false });
 
-  handleError = (err) => this.setState({ showSnack: true, snackbarText: err });
+  handleError = (err) => {
+    this.setState({ showSnack: true, snackbarText: err });
+    if (err.includes('auth token')) {
+      this.handleLogOut();
+    }
+  }
 
   handleLogin = () => {
     const { username, password } = this.state;

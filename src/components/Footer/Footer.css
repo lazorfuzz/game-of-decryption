@@ -1,6 +1,6 @@
 .footerText {
   color: rgba(255, 255, 255, .6);
-  font-size: 12px;
   margin: 8px;
+  font-size: 12px !important;
   text-align: center;
 }
