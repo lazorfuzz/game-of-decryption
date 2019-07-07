@@ -12,7 +12,8 @@ class MemberArea extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      news: []
+      news: [],
+      newsHeightOffset: 0
     };
   }
 
@@ -32,13 +33,24 @@ class MemberArea extends Component {
     </NewsItem>
   ));
 
+  handleNewsScroll = (evt) => {
+    const { scrollTop } = evt.target;
+    const { newsHeightOffset } = this.state;
+    if (scrollTop < 150) {
+      this.setState({ newsHeightOffset: scrollTop });
+    }
+    if (scrollTop > 150 && newsHeightOffset < 150) {
+      this.setState({ newsHeightOffset: 150 });
+    }
+  }
+
   render() {
-    const { news } = this.state;
+    const { news, newsHeightOffset } = this.state;
     return (
       <Container className="main">
         <Title>News</Title>
         <Card>
-          <NewsContainer>
+          <NewsContainer onScroll={this.handleNewsScroll} heightOffset={newsHeightOffset}>
             {
               news.length > 0 ? this.generateNews() : (
                 <Loading loadingText="Loading News" />
@@ -57,12 +69,13 @@ const Container = styled.div`
 `;
 
 const NewsContainer = styled.div`
-  height: 200px;
+  height: ${({ heightOffset }) => 200 + heightOffset}px;
   margin: 2px 0;
   display: flex;
   flex-flow: column;
   overflow-y: scroll;
   overflow-x: hidden;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1) 100ms;
 `;
 
 const NewsItem = styled.div`
