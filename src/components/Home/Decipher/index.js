@@ -69,7 +69,8 @@ class Decipher extends Component {
         this.props.onError(`Deciphering Error - ${errMessage}`);
         this.setState({ decipheredText: errMessage});
       }
-    });
+    })
+    .finally(() => setTimeout(() => window.scroll({ top: 500, behavior: 'smooth' }), 50));
   }
 
   handleCipherTextChange = ({ target }) => this.setState({ readPayload: target.value });
