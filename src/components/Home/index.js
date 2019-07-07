@@ -134,9 +134,9 @@ const OptionsBar = styled.div`
   background: rgb(82, 94, 114);
   box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
   @media (max-width: 768px) {
-    bottom: 0;
     top: auto;
     left: 0;
+    bottom: 0;
     width: 100%;
     height: 56px;
     flex-flow: row;

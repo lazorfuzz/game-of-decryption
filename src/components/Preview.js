@@ -10,11 +10,11 @@ const PreviewImage = styled.img`
 `;
 
 const PreviewText = styled.textarea`
-  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 4px;
   padding: 8px 16px;
   margin-top: 0;
-  background: #31465a;
+  background: rgba(30, 43, 49, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   color: white;
   font-size: 16px;
   min-height: 120px;
@@ -33,6 +33,7 @@ const PreviewPre = styled.pre`
   min-height: 120px;
   margin-bottom: 1em;
   outline: none;
+  white-space: wrap;
 `;
 
 export { PreviewImage, PreviewText, PreviewPre };

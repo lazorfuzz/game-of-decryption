@@ -8,6 +8,13 @@ const muiTheme = createMuiTheme({
     secondary: {
       main: '#2dc469'
     }
+  },
+  overrides: {
+    MuiButton: {
+      containedSecondary: {
+        color: 'white',
+      }
+    },
   }
 });
 

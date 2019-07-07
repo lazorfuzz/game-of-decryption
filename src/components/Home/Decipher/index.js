@@ -49,7 +49,7 @@ class Decipher extends Component {
           this.setState({
             readPayload: result.text,
             readStatus: `OCR Result (${result.confidence}% Confidence)`
-          });
+          }, () => this.previewText.focus());
         })
         .catch((err) => this.props.onError(err));
     }, false);
@@ -109,7 +109,7 @@ class Decipher extends Component {
             {
               readPayload.length > 0 && (
                 <React.Fragment>
-                  <PreviewText value={readPayload} onChange={this.handleCipherTextChange} />
+                  <PreviewText ref={(pre) => this.previewText = pre} value={readPayload} onChange={this.handleCipherTextChange} />
                   <Button variant="contained" color="primary" classes={{ root: classes.submitButton }} onClick={this.handleDecipher}>Decipher</Button>
                 </React.Fragment>
               )
@@ -125,7 +125,10 @@ class Decipher extends Component {
                   <PreviewPre>
                     {decipheredText}
                   </PreviewPre>
-                  <Button variant="contained" color="primary">Save</Button>
+                  <OptionsContainer>
+                    <Button variant="contained" color="secondary" classes={{ root: classes.optionsButton, }}>Copy</Button>
+                    <Button variant="contained" color="primary" classes={{ root: classes.optionsButton }}>Save</Button>
+                  </OptionsContainer>
                 </MainContainer>
               </Card>
             </ResultsContainer>
@@ -142,6 +145,12 @@ const styles = ({
     '@media (max-width: 768px)': {
       width: '100%'
     },
+  },
+  optionsButton: {
+    width: '20%',
+    '@media (max-width: 768px)': {
+      width: '40%'
+    },
   }
 });
 
@@ -156,8 +165,13 @@ const MainContainer = styled.div`
   flex-flow: column;
 `;
 
+const OptionsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const ResultsContainer = styled.div`
-  margin-top: 1.5em;
+  margin-top: 2em;
 `;
 
 const ProgressContainer = styled.div`
