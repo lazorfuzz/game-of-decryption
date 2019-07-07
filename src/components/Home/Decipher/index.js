@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import { BaseInput } from '../../Input';
 import Card from '../../Card';
 import Text, { Title } from '../../Text';
-import { PreviewImage, PreviewText, PreviewPre } from '../../Preview';
+import { PreviewImage, PreviewText } from '../../Preview';
 import { readImage } from '../read-image';
 import { solveCipher } from '../../../api';
 
@@ -75,6 +75,14 @@ class Decipher extends Component {
 
   handleCipherTextChange = ({ target }) => this.setState({ readPayload: target.value });
 
+  handleDecipheredTextChange = ({ target }) => this.setState({ decipheredText: target.value });
+
+  handleCopyResult = () => {
+    this.previewPre.select()
+    document.execCommand('copy');
+    this.props.onError('Copied to clipboard!')
+  }
+
   render() {
     const { theme, classes } = this.props;
     const { imageSrc, showReadStatus, readStatus, readPayload, readProgress, decipheredText } = this.state;
@@ -119,14 +127,12 @@ class Decipher extends Component {
         {
           decipheredText.length > 0 && (
             <ResultsContainer className="animated fadeInUp">
-              <Title>Decipher Result</Title>
+              <Title>Deciphered Text</Title>
               <Card>
                 <MainContainer className="animated fadeIn">
-                  <PreviewPre>
-                    {decipheredText}
-                  </PreviewPre>
+                  <PreviewText ref={(pre) => this.previewPre = pre} value={decipheredText} onChange={this.handleCipherTextChange} />
                   <OptionsContainer>
-                    <Button variant="contained" color="secondary" classes={{ root: classes.optionsButton, }}>Copy</Button>
+                    <Button variant="contained" color="secondary" classes={{ root: classes.optionsButton, }} onClick={this.handleCopyResult}>Copy</Button>
                     <Button variant="contained" color="primary" classes={{ root: classes.optionsButton }}>Save</Button>
                   </OptionsContainer>
                 </MainContainer>

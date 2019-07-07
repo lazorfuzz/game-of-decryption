@@ -20,6 +20,13 @@ const PreviewText = styled.textarea`
   min-height: 120px;
   margin-bottom: 1em;
   outline: none;
+  transition: all 150ms ease-in;
+  &:hover {
+    background: rgba(30, 43, 49, 0.8);
+  }
+  &:active {
+    background: rgba(30, 43, 49, 0.9);
+  }
 `;
 
 const PreviewPre = styled.pre`
@@ -33,7 +40,7 @@ const PreviewPre = styled.pre`
   min-height: 120px;
   margin-bottom: 1em;
   outline: none;
-  white-space: wrap;
+  overflow-x: auto;
 `;
 
 export { PreviewImage, PreviewText, PreviewPre };
