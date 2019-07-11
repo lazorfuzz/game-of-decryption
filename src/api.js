@@ -103,7 +103,7 @@ export async function setOrganization(name, method = 'POST', form = {}) {
   return JSON.parse(res);
 }
 
-export async function solveCipher(cipher, lang = 'en') {
+export async function solveCipher(cipher, lang = 'idk') {
   const res = await request.post({
     uri: `${constants.apiUrl}/caesar`,
     headers,
