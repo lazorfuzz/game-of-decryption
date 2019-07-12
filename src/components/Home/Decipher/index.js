@@ -80,7 +80,7 @@ class Decipher extends Component {
   handleCopyResult = () => {
     this.previewPre.select()
     document.execCommand('copy');
-    document.querySelector('#root').select();
+    document.querySelector('#root').focus();
     this.props.onError('Copied to clipboard!');
   }
 
