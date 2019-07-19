@@ -11,6 +11,7 @@ import { BaseInput } from '../../Input';
 import Card from '../../Card';
 import Text, { Title } from '../../Text';
 import { PreviewImage, PreviewText } from '../../Preview';
+import Solution, { Table, TH, TR, TD, TBody, SolutionOptions } from '../../Solution';
 import Loading from '../../Loading';
 import { readImage } from '../read-image';
 import { solveCipher, getSavedSolutions, addSavedSolution, setSavedSolution } from '../../../api';
@@ -20,10 +21,10 @@ class Decipher extends Component {
     super(props);
     this.state = {
       decipheringNewImage: false,
-      savedSolutions: [],
+      savedSolutions: false,
       imageSrc: '',
       showReadStatus: false,
-      readStatus: 'Reading image... Please wait.',
+      readStatus: '',
       readProgress: 0,
       readPayload: '',
       decipheredText: '',
@@ -34,12 +35,23 @@ class Decipher extends Component {
   componentDidMount() {
     getSavedSolutions()
       .then((savedSolutions) => this.setState({ savedSolutions: savedSolutions.length ? savedSolutions : null }))
-      .catch(() => this.setState({ savedSolutions: null }));
+      .catch((err) => {
+        this.setState({ savedSolutions: null });
+        if (err.response) {
+          this.props.onError(JSON.parse(err.response.body).message);
+        }
+      });
   }
 
   handleStartDecipher = () => this.fileSelector.click();
 
-  handleReadProgress = (readProgress) => this.setState({ readProgress });
+  handleReadProgress = (readStatus, readProgress) => {
+    if (readStatus === 'recognizing text') {
+      this.setState({ readStatus, readProgress });
+      return;
+    }
+    this.setState({ readStatus });
+  }
 
   previewImage = () => {
     this.setState({ showReadStatus: false, readPayload: '', decipheredText: '' });
@@ -117,6 +129,7 @@ class Decipher extends Component {
     setSavedSolution(id, 'DELETE')
       .then(() => {
         const { savedSolutions } = this.state;
+        // Get new savedSolutions array and set to null if it's empty
         const newSaved = savedSolutions.filter(s => s.id !== id);
         this.setState({ savedSolutions: newSaved.length ? newSaved : null });
       })
@@ -128,19 +141,21 @@ class Decipher extends Component {
   }
 
   generateSavedSolutions = () => this.state.savedSolutions.map((solution) => (
-    <SolutionContainer>
+    <Solution key={solution.id}>
       <Card className="animated fadeIn">
         <Table>
-          <TR>
-            <TH>Cipher</TH>
-            <TH>Solution</TH>
-            <TH small>Lang</TH>
-          </TR>
-          <TR bodyRow>
-            <TD>{solution.cipher}</TD>
-            <TD>{solution.solution}</TD>
-            <TD>{solution.lang}</TD>
-          </TR>
+          <TBody>
+            <TR>
+              <TH>Cipher</TH>
+              <TH>Solution</TH>
+              <TH small>Lang</TH>
+            </TR>
+            <TR bodyRow>
+              <TD>{solution.cipher}</TD>
+              <TD>{solution.solution}</TD>
+              <TD>{solution.lang}</TD>
+            </TR>
+          </TBody>
         </Table>
         <SolutionOptions>
           <IconButton
@@ -151,7 +166,7 @@ class Decipher extends Component {
           </IconButton>
         </SolutionOptions>
       </Card>
-    </SolutionContainer>
+    </Solution>
   ));
 
   render() {
@@ -183,7 +198,7 @@ class Decipher extends Component {
                 }
                 {
                   showReadStatus && (
-                    <Text>{readStatus}</Text>
+                    <Text className="capitalize">{readStatus}</Text>
                   )
                 }
                 {
@@ -221,7 +236,7 @@ class Decipher extends Component {
               !savedSolutions &&
               <MainContainer className="animated fadeIn">
                 {
-                  savedSolutions !== null && !savedSolutions.length &&
+                  savedSolutions === false &&
                   <Loading loadingText="Loading Saved Solutions" />
                 }
                 {
@@ -318,44 +333,6 @@ const NewButtonContainer = styled.div`
     bottom: 96px;
     right: 48px;
   }
-`;
-
-const SolutionContainer = styled.div`
-  margin-top: 16px;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const TR = styled.tr`
-  padding: 4px 0;
-  border-bottom: 1px solid rgb(62, 77, 102);
-  ${({ bodyRow }) => bodyRow && 'height: 80px;'}
-`;
-
-const TH = styled.th`
-  color: rgba(255, 255, 255, .8);
-  font-weight: 300;
-  font-size: 1.1em;
-  width: ${({ small }) => small ? '10%' : '45%'};
-  padding: 8px 0;
-  @media (max-width: 415px) {
-    width: ${({ small }) => small ? '15%' : '40%'};
-  }
-`;
-
-const TD = styled.td`
-  color: rgba(255, 255, 255, .5);
-  text-align: center;
-  padding: 16px 8px;
-`;
-
-const SolutionOptions = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: 2px 4px;
 `;
 
 export default withStyles(styles)(withTheme(Decipher));

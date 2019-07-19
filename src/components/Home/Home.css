@@ -21,3 +21,7 @@
   color: rgba(255, 255, 255, .4);
   text-align: center;
 }
+
+.capitalize {
+  text-transform: capitalize;
+}

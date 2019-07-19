@@ -4,7 +4,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Loading extends PureComponent {
   render() {
-    const { loadingText } = this.props
+    const { loadingText } = this.props;
+    console.log(loadingText);
     return (
       <LoadingContainer className="animated fadeIn">
         <CircularProgress color="secondary" />

@@ -12,10 +12,10 @@ async function detectLanguage(image, progressCallback) {
 async function readImage(image, progressCallback) {
   const worker = new window.Tesseract.TesseractWorker();
   try {
-    const result = worker.recognize(image, 'eng+rus+spa+ara')
+    const result = worker.recognize(image, 'eng+rus+spa+ara+fas')
       .progress((p) => {
         console.log(p);
-        if (p.status === 'recognizing text') progressCallback(p.progress);
+        progressCallback(p.status, p.progress);
       })
     return result;
     
