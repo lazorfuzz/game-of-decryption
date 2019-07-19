@@ -74,13 +74,23 @@ export async function getSavedSolutions() {
   return JSON.parse(res);
 }
 
-export async function setSavedSolution(cipher, lang, solution) {
+export async function addSavedSolution(cipher, lang, solution) {
   const res = await request.post({
     uri: `${constants.apiUrl}/saved_solutions`,
     headers,
     form: {
       cipher, lang, solution, user_id: currentUser.id
     }
+  });
+  return JSON.parse(res);
+}
+
+export async function setSavedSolution(id, method = 'PUT', form = {}) {
+  const res = await request({
+    uri: `${constants.apiUrl}/saved_solutions/${id}`,
+    method,
+    headers,
+    form
   });
   return JSON.parse(res);
 }

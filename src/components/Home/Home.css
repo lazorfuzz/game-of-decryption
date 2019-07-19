@@ -16,3 +16,8 @@
 .heroTitle {
   margin: 16px 16px !important;
 }
+
+.fadedText {
+  color: rgba(255, 255, 255, .4);
+  text-align: center;
+}

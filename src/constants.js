@@ -1,5 +1,5 @@
 const variables = {
-  apiUrl: 'https://gameofdecypher.a2hosted.com/api',
+  apiUrl: 'https://gameofdecryption.pythonanywhere.com',
   // apiUrl: 'http://127.0.0.1:5000',
 };
 

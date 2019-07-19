@@ -213,7 +213,7 @@ class App extends Component {
             <Home onError={this.handleError} organizations={organizations} onLogOut={this.handleLogOut} />
           )
         }
-        <Footer shifted={pathname === 'home'} />
+        <Footer shifted={pathname === 'home'} visible={pathname === 'login'} />
         <Snackbar
           anchorOrigin={{
             vertical: 'top',

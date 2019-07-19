@@ -5,8 +5,9 @@ import './Footer.css';
 
 class Footer extends PureComponent {
   render() {
+    const { visible } = this.props;
     return (
-      <Wrapper shifted={this.props.shifted}>
+      <Wrapper shifted={this.props.shifted} visible={visible}>
         <Text className="footerText">Made with <span role="img" aria-label="love">❤️</span> by IST440 Summer 2019 Team 2.</Text>
         <Text className="footerText">View this project on <FooterLink target="_blank" href="https://github.com/lazorfuzz/game-of-decryption">GitHub.</FooterLink></Text>
       </Wrapper>
@@ -17,7 +18,7 @@ class Footer extends PureComponent {
 export default Footer;
 
 const Wrapper = styled.div`
-  display: flex;
+  display: ${({ visible }) => visible ? 'flex' : 'none'};
   flex-flow: column;
   align-items: center;
   position: relative;
