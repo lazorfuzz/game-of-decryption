@@ -346,7 +346,7 @@ const Progress = styled.div`
 `;
 
 const NewButtonContainer = styled.div`
-  position: absolute;
+  position: fixed;
   bottom: 100px;
   right: 100px;
   @media (max-width: 768px) {
