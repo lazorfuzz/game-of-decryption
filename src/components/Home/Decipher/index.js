@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
+import * as exifr from 'exifr';
 import { BaseInput } from '../../Input';
 import Card from '../../Card';
 import Text, { Title } from '../../Text';
@@ -28,7 +29,8 @@ class Decipher extends Component {
       readProgress: 0,
       readPayload: '',
       decipheredText: '',
-      decipheredLang: ''
+      decipheredLang: '',
+      imageExif: ''
     };
   }
 
@@ -53,6 +55,15 @@ class Decipher extends Component {
     this.setState({ readStatus });
   }
 
+  handleEXIF = (exif) => {
+    if (exif) {
+      const data = Object.keys(exif).map(key => `${key}: ${exif[key]}`);
+      this.setState({ imageExif: data.join('\n') });
+      return;
+    }
+    this.setState({ imageExif: 'No EXIF found' });
+  }
+
   previewImage = () => {
     this.setState({ showReadStatus: false, readPayload: '', decipheredText: '' });
     const file = this.fileSelector.files[0];
@@ -62,6 +73,10 @@ class Decipher extends Component {
       this.props.onError('Image size too large. Max image size is 3.3 MB. Did you crop out everything but the text?');
       return;
     }
+    // Parse image EXIF data
+    exifr.parse(file)
+      .then(this.handleEXIF)
+      .catch(console.error);
     this.setState({ decipheringNewImage: true });
     const reader = new FileReader();
     reader.addEventListener('load', () => {
@@ -171,7 +186,7 @@ class Decipher extends Component {
 
   render() {
     const { theme, classes } = this.props;
-    const { decipheringNewImage, savedSolutions, imageSrc, showReadStatus, readStatus, readPayload, readProgress, decipheredText } = this.state;
+    const { decipheringNewImage, savedSolutions, imageSrc, showReadStatus, readStatus, readPayload, readProgress, decipheredText, imageExif } = this.state;
     return (
       <Container className="main">
         <DecipherContainer visible={decipheringNewImage}>
@@ -189,7 +204,12 @@ class Decipher extends Component {
                 {
                   imageSrc.length > 0 && (
                     <React.Fragment>
-                      <PreviewImage src={imageSrc} />
+                      <ImageDisplay>
+                        <PreviewImage src={imageSrc} />
+                        <ExifContainer>
+                          {imageExif}
+                        </ExifContainer>
+                      </ImageDisplay>
                       <ProgressContainer>
                         <Progress progress={readProgress} progressColor={theme.palette.primary.light} />
                       </ProgressContainer>
@@ -333,6 +353,15 @@ const NewButtonContainer = styled.div`
     bottom: 96px;
     right: 48px;
   }
+`;
+
+const ImageDisplay = styled.div`
+  display: flex;
+`;
+
+const ExifContainer = styled.pre`
+  overflow-x: auto;
+  margin-left: 16px;
 `;
 
 export default withStyles(styles)(withTheme(Decipher));
