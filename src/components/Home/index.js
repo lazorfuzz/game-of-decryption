@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import LioWebRTC from 'liowebrtc';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -19,7 +20,10 @@ class Home extends Component {
     super(props);
     this.state = {
       page: window.location.hash || '#home',
-      organization: null
+      organization: null,
+      online: [],
+      onlineCount: 1,
+      messages: []
     };
   }
 
@@ -27,6 +31,30 @@ class Home extends Component {
     getOrganization(currentUser.organization)
       .then(organization => this.setState({ organization }))
       .catch(console.error);
+    this.webrtc = new LioWebRTC({
+      debug: true,
+      dataOnly: true,
+      nick: currentUser.username
+    });
+
+    this.webrtc.on('ready', this.joinRoom);
+    this.webrtc.on('createdPeer', this.handleCreatedPeer);
+    this.webrtc.on('receivedPeerData', this.handleReceivedPeerData);
+  }
+
+  joinRoom = ()  => {
+    const { organization } = currentUser;
+    this.webrtc.joinRoom(`game-of-decryption-${organization}`);
+  }
+
+  handleCreatedPeer = (peer) => {
+    const peers = this.webrtc.getPeers();
+    this.setState({ online: peers });
+    setTimeout(() => this.setState({ onlineCount: peers.length + 1}), 1000);
+  }
+
+  handleReceivedPeerData = (type, paylaod, peer) => {
+
   }
 
   changePage = (page) => {
@@ -36,7 +64,7 @@ class Home extends Component {
 
   render() {
     const { classes } = this.props;
-    const { page, organization } = this.state;
+    const { page, organization, online, onlineCount } = this.state;
     return (
       <Wrapper>
         <OptionsBar>
@@ -76,7 +104,8 @@ class Home extends Component {
           page === '#decipher' && <Decipher onError={this.props.onError} />
         }
         {
-          page === '#organization' && <Organization organization={organization} />
+          page === '#organization' &&
+          <Organization organization={organization} online={online} onlineCount={onlineCount} />
         }
         {
           page === '#settings' && 
