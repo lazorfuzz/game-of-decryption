@@ -46,8 +46,18 @@ class Home extends Component {
     });
     // Create event handlers for WebRTC
     this.webrtc.on('ready', this.joinRoom);
-    this.webrtc.on('createdPeer', this.handleCreatedPeer);
+    this.webrtc.on('createdPeer', this.handlePeerChange);
+    this.webrtc.on('removedPeer', this.handlePeerChange)
     this.webrtc.on('receivedPeerData', this.handleReceivedPeerData);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { page } = this.state;
+    if (prevState.page !== page && page === '#organization') {
+      getOrganization(currentUser.organization)
+      .then(organization => this.setState({ organization }))
+      .catch(console.error);
+    }
   }
 
   componentWillUnmount() {
@@ -59,14 +69,21 @@ class Home extends Component {
     this.webrtc.joinRoom(`game-of-decryption-${organization}`);
   }
 
-  handleCreatedPeer = (peer) => {
+  handlePeerChange = (peer) => {
     const peers = this.webrtc.getPeers();
     this.setState({ online: peers });
     setTimeout(() => this.setState({ onlineCount: peers.length + 1}), 1000);
   }
 
-  handleReceivedPeerData = (type, paylaod, peer) => {
-
+  handleReceivedPeerData = (type, payload, peer) => {
+    switch (type) {
+      case 'chat':
+        const { messages } = this.state;
+        const { sender, timestamp, message } = payload;
+        this.setState({ messages: [...messages, { sender, timestamp, message }] });
+      break;
+      default: break;
+    }
   }
 
   handleUpdatedSettings = () => {
@@ -126,8 +143,10 @@ class Home extends Component {
           page === '#organization' &&
           <Organization
             organization={organization}
+            organizations={this.props.organizations}
             online={online}
             onlineCount={onlineCount}
+            onOrganizationsRefresh={this.handleUpdatedSettings}
           />
         }
         {
@@ -145,7 +164,7 @@ class Home extends Component {
   }
 }
 
-const styles = theme => ({
+const styles = ({
   optionButtonSelected: {
     color: 'white'
   },
