@@ -120,15 +120,21 @@ class Organization extends Component {
                     editing === user.id ? <DoneIcon /> : <EditIcon />
                   }
                 </IconButton>
-                <IconButton
-                  classes={{ root: classes.userOptionButton }}
-                  onClick={() => this.handleUserDelete(user.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
+                {
+                  editing !== user.id &&
+                  <IconButton
+                    classes={{ root: classes.userOptionButton }}
+                    onClick={() => this.handleUserDelete(user.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                }
               </React.Fragment>
             }
-            <OnlineIndicator online={user.online} />
+            {
+              editing !== user.id &&
+              <OnlineIndicator online={user.online} />
+            }
           </ListItem>
           <Divider variant="inset" component="li" />
         </React.Fragment>
