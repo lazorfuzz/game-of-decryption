@@ -17,6 +17,12 @@ import Loading from '../../Loading';
 import { readImage } from '../read-image';
 import { solveCipher, getSavedSolutions, addSavedSolution, setSavedSolution } from '../../../api';
 
+/**
+ * Decipher page
+ *
+ * @class Decipher
+ * @extends {Component}
+ */
 class Decipher extends Component {
   constructor(props) {
     super(props);

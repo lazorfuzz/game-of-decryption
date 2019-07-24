@@ -3,6 +3,12 @@ import styled from 'styled-components';
 import Text from '../Text';
 import './Footer.css';
 
+/**
+ * The app's footer
+ *
+ * @class Footer
+ * @extends {PureComponent}
+ */
 class Footer extends PureComponent {
   render() {
     const { visible } = this.props;

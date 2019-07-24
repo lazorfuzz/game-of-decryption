@@ -18,6 +18,12 @@ import Footer from './components/Footer';
 import { Title } from './components/Text';
 import { login, signup, getOrganization } from './api';
 
+/**
+ * The base component where we initialize our app tree.
+ *
+ * @class App
+ * @extends {Component}
+ */
 class App extends Component {
   constructor(props) {
     super(props);
@@ -35,8 +41,9 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // Fetch organizations list to display in create account
     getOrganization('all')
-      .then(organizations => this.setState({ organizations }))
+      .then(organizations => {if (this) this.setState({ organizations }); })
       .catch(console.error);
   }
 
@@ -44,6 +51,7 @@ class App extends Component {
 
   handleError = (err) => {
     this.setState({ showSnack: true, snackbarText: err });
+    // If the error involves the auth token, wipe the user state
     if (err.includes('auth token')) {
       this.handleLogOut();
     }
@@ -56,6 +64,7 @@ class App extends Component {
     }
     login(username, password)
       .then((data) => {
+        // If we received a token, we're cleared for entry
         if (data.token) {
           this.setState({ pathname: 'home' });
         } else {
@@ -213,6 +222,7 @@ class App extends Component {
             <Home onError={this.handleError} organizations={organizations} onLogOut={this.handleLogOut} />
           )
         }
+        {/* Turn off footer visibility if the user is logged in */}
         <Footer shifted={pathname === 'home'} visible={pathname === 'login'} />
         <Snackbar
           anchorOrigin={{

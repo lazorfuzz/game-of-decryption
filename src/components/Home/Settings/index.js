@@ -16,6 +16,12 @@ import Text, { Title } from '../../Text';
 import { currentUser, setUser } from '../../../api';
 
 
+/**
+ * Settings page
+ *
+ * @class Settings
+ * @extends {Component}
+ */
 class Settings extends Component {
   constructor(props) {
     super(props);
@@ -54,6 +60,7 @@ class Settings extends Component {
     })
       .then((res) => {
         this.props.changePage('#home');
+        this.props.onChangedSettings();
       })
       .catch((err) => {
         const error = JSON.parse(err.response.body);

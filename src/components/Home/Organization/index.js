@@ -14,6 +14,12 @@ import Text, { Title } from '../../Text';
 import { currentUser } from '../../../api';
 
 
+/**
+ * Organization page
+ *
+ * @class Organization
+ * @extends {Component}
+ */
 class Organization extends Component {
   generateUsers = () => this.props.organization.users.map((user) => (
     <React.Fragment key={user.username}>

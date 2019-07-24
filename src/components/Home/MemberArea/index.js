@@ -8,6 +8,12 @@ import { Title } from '../../Text';
 import DesktopTabletView from '../../DesktopTabletView';
 import MobileView from '../../MobileView';
 
+/**
+ * Member area page
+ *
+ * @class MemberArea
+ * @extends {Component}
+ */
 class MemberArea extends Component {
   constructor(props) {
     super(props);

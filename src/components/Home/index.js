@@ -15,6 +15,12 @@ import Settings from './Settings';
 import { getOrganization, currentUser } from '../../api';
 import './Home.css';
 
+/**
+ * The root component of our logged-in app tree.
+ *
+ * @class Home
+ * @extends {Component}
+ */
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -28,18 +34,24 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    // Fetch info about organization
     getOrganization(currentUser.organization)
       .then(organization => this.setState({ organization }))
       .catch(console.error);
+    // Initialize LioWebRTC and make ourselves 'online'
     this.webrtc = new LioWebRTC({
       debug: true,
       dataOnly: true,
       nick: currentUser.username
     });
-
+    // Create event handlers for WebRTC
     this.webrtc.on('ready', this.joinRoom);
     this.webrtc.on('createdPeer', this.handleCreatedPeer);
     this.webrtc.on('receivedPeerData', this.handleReceivedPeerData);
+  }
+
+  componentWillUnmount() {
+    this.webrtc.quit();
   }
 
   joinRoom = ()  => {
@@ -58,6 +70,7 @@ class Home extends Component {
   }
 
   changePage = (page) => {
+    // Where the magic happens in our self-rolled hash routing system
     this.setState({ page });
     window.location.hash = page;
   }
@@ -105,13 +118,18 @@ class Home extends Component {
         }
         {
           page === '#organization' &&
-          <Organization organization={organization} online={online} onlineCount={onlineCount} />
+          <Organization
+            organization={organization}
+            online={online}
+            onlineCount={onlineCount}
+          />
         }
         {
           page === '#settings' && 
           <Settings
             changePage={this.changePage}
             organizations={this.props.organizations}
+            onChangeSettings={this.handleUpdatedSettings}
             onLogOut={this.props.onLogOut}
             onError={this.props.onError}
           />
