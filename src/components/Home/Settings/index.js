@@ -60,9 +60,10 @@ class Settings extends Component {
     })
       .then((res) => {
         this.props.changePage('#home');
-        this.props.onChangedSettings();
+        this.props.onChangeSettings();
       })
       .catch((err) => {
+        console.error(err);
         const error = JSON.parse(err.response.body);
         this.props.onError(error);
       });

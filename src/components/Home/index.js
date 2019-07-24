@@ -69,6 +69,12 @@ class Home extends Component {
 
   }
 
+  handleUpdatedSettings = () => {
+    getOrganization(currentUser.organization)
+      .then(organization => this.setState({ organization }))
+      .catch(console.error);
+  }
+
   changePage = (page) => {
     // Where the magic happens in our self-rolled hash routing system
     this.setState({ page });

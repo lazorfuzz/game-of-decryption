@@ -226,7 +226,8 @@ Fetch the news by a specific query
 | --- | --- | --- | --- |
 | [query] | <code>string</code> | <code>&quot;&#x27;_org&#x27;&quot;</code> | The search query. Defaults to the user's organization name |
 
-## Functions - components/Home/read-iamge.js
+
+## Functions - components/Home/read-image.js
 
 <dl>
 <dt><a href="#detectLanguage">detectLanguage(image, progressCallback)</a> ⇒</dt>
