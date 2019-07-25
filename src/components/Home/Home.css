@@ -25,9 +25,3 @@
 .capitalize {
   text-transform: capitalize;
 }
-
-.userEditInput {
-  width: 150px;
-  margin-left: 4px;
-  margin-right: 4px;
-}

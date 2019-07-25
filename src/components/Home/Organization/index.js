@@ -22,6 +22,7 @@ import { BaseInput, InputContainer } from '../../Input';
 import Loading from '../../Loading';
 import Text, { Title } from '../../Text';
 import { currentUser, setUser } from '../../../api';
+import './Organization.css';
 
 
 /**
@@ -231,7 +232,6 @@ const OnlineIndicator = styled.div`
 const UserEditor = styled.div`
   flex: auto;
   display: flex;
-  justify-content: space-around;
   overflow-x: auto;
 `;
 
