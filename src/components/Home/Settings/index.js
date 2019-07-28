@@ -194,7 +194,7 @@ const styles = ({
     fontWeight: 'bold'
   },
   orgSelectRoot: {
-    color: 'white',
+    color: '#000000',
     width: 250
   }
 });

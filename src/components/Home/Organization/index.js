@@ -205,7 +205,7 @@ const styles = ({
     color: 'rgba(255, 255, 255, 0.7)'
   },
   orgSelectRoot: {
-    color: 'white',
+    color: '#000000',
     width: 100
   }
 });

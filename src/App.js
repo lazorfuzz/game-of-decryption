@@ -250,7 +250,7 @@ const styles = ({
     color: 'white !important',
   },
   orgSelectRoot: {
-    color: 'white',
+    color: '#000000',
     width: 200
   }
 });
