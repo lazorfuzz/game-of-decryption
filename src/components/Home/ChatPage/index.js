@@ -5,15 +5,22 @@ import { deepPurple } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import BackIcon from '@material-ui/icons/KeyboardBackspace';
-import { motion } from 'framer-motion';
 
-class Chat extends Component {
+class ChatPage extends Component {
+  componentDidMount() {
+    this.props.onResetUnseen();
+    this.scrollDown();
+  }
+
   componentDidUpdate(prevProps) {
     const { messages } = this.props;
     if (messages.length > prevProps.messages.length) {
-      setTimeout(() => this.chatLog.scrollTop = this.chatLog.scrollHeight, 50);
+      this.scrollDown();
+      this.props.onResetUnseen();
     }
   }
+
+  scrollDown = () => setTimeout(() => this.chatLog.scrollTop = this.chatLog.scrollHeight, 50);
 
   generateChats = () => {
     const { classes } = this.props;
@@ -37,26 +44,18 @@ class Chat extends Component {
   render() {
     const { isOpen, classes } = this.props;
     return (
-      <Wrapper animate={isOpen ? 'open' : 'closed'} variants={variants}>
-          <IconButton classes={{ root: classes.backButton }} onClick={this.props.onToggleChat}>
-            <BackIcon />
-          </IconButton>
-          <ChatLog ref={(chatLog) => this.chatLog = chatLog}>
-            {this.generateChats()}
-          </ChatLog>
-          <ChatInput
-            ref={(chatInput) => this.chatInput = chatInput}
-            onKeyUp={this.handleKeyUp}
-            placeholder="Enter a message"
-          />
-      </Wrapper>
+      <Container className="main">
+        <ChatLog ref={(chatLog) => this.chatLog = chatLog}>
+          {this.generateChats()}
+        </ChatLog>
+        <ChatInput
+          ref={(chatInput) => this.chatInput = chatInput}
+          onKeyUp={this.handleKeyUp}
+          placeholder="Enter a message"
+        />
+      </Container>
     );
   }
-}
-
-const variants = {
-  open: { scale: 1, x: 0, width: 270},
-  closed: { x: -100, scale: .01, width: 0 },
 }
 
 const styles = ({
@@ -71,26 +70,15 @@ const styles = ({
   backButton: {
     width: 48,
     height: 48,
-    color: 'white',
-    marginTop: -8
+    color: 'white'
   }
-})
+});
 
-const Wrapper = styled(motion.div)`
+const Container = styled.div`
   display: flex;
   flex-flow: column;
-  width: 0px;
   height: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
-  padding-left: 110px;
-  padding-top: 16px;
-  background: rgb(47, 57, 74);
-  z-index: 10;
-  -webkit-box-shadow: 10px 0px 14px -10px rgba(0,0,0,1);
-  -moz-box-shadow: 10px 0px 14px -10px rgba(0,0,0,1);
-  box-shadow: 10px 0px 14px -10px rgba(0,0,0,1);
+  align-items: center;
 `;
 
 const ChatMessage = styled.div`
@@ -106,19 +94,19 @@ const ChatBody = styled.p`
 
 const ChatLog = styled.div`
   width: 100%;
-  height: calc(100% - 180px);
+  height: calc(100vh - 240px);
   overflow-y: auto;
   color: white;
   font-size: 16px;
 `;
 
 const ChatInput = styled.textarea`
-  position: absolute;
-  bottom: 24px;
+  position: fixed;
+  bottom: 64px;
   border: 1px solid rgba(255, 255, 255, .1);
   background-color: rgb(24, 28, 37);
   height: 80px;
-  width: 250px;
+  width: 90%;
   color: white;
   border-radius: 8px;
   outline: none;
@@ -128,4 +116,4 @@ const ChatInput = styled.textarea`
 
 
 
-export default withStyles(styles)(Chat);
+export default withStyles(styles)(ChatPage);

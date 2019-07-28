@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import LioWebRTC from 'liowebrtc';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import MessageIcon from '@material-ui/icons/Message';
 import Tooltip from '@material-ui/core/Tooltip';
 import HomeIcon from '@material-ui/icons/Home';
 import PanoIcon from '@material-ui/icons/Photo';
 import OrgIcon from '@material-ui/icons/People';
-import SettingsIcon from '@material-ui/icons/Settings';
 import MemberArea from './MemberArea';
+import ChatPage from './ChatPage';
 import Decipher from './Decipher';
 import Organization from './Organization';
 import Settings from './Settings';
@@ -32,7 +33,8 @@ class Home extends Component {
       online: [],
       onlineCount: 1,
       messages: [],
-      openChat: false
+      openChat: false,
+      unseenMessages: 0
     };
   }
 
@@ -81,9 +83,11 @@ class Home extends Component {
   handleReceivedPeerData = (type, payload, peer) => {
     switch (type) {
       case 'chat':
-        const { messages } = this.state;
+        const { messages, page, openChat, unseenMessages } = this.state;
         const { sender, timestamp, message } = payload;
         this.setState({ messages: [...messages, { sender, timestamp, message }] });
+        if (page === '#messages' || openChat) return;
+        this.setState({ unseenMessages: unseenMessages + 1 });
       break;
       default: break;
     }
@@ -103,7 +107,7 @@ class Home extends Component {
 
   handleToggleChat = () => {
     const { openChat } = this.state;
-    this.setState({ openChat: !openChat });
+    this.setState({ openChat: !openChat, unseenMessages: 0 });
   }
 
   handleSendChat = (message) => {
@@ -122,9 +126,11 @@ class Home extends Component {
     }
   }
 
+  handleResetUnseen = () => this.setState({ unseenMessages: 0 });
+
   render() {
     const { classes } = this.props;
-    const { page, organization, online, onlineCount, openChat, messages } = this.state;
+    const { page, organization, online, onlineCount, openChat, messages, unseenMessages } = this.state;
     return (
       <Wrapper>
         <OptionsBar>
@@ -150,10 +156,12 @@ class Home extends Component {
             </Tooltip>
           </Option>
           <Option>
-            <Tooltip title="Settings">
-              <IconButton onClick={() => window.innerWidth < 786 ? this.changePage('#messages') : this.handleToggleChat()} classes={{ root: page === '#messages' ? classes.optionButtonSelected : classes.optionButton }}>
-                <MessageIcon />
-              </IconButton>
+            <Tooltip title="Messages">
+              <Badge classes={{ badge: classes.badge }} color="primary" badgeContent={unseenMessages}>
+                <IconButton onClick={() => window.innerWidth < 786 ? this.changePage('#messages') : this.handleToggleChat()} classes={{ root: page === '#messages' ? classes.optionButtonSelected : classes.optionButton }}>
+                  <MessageIcon />
+                </IconButton>
+              </Badge>
             </Tooltip>
           </Option>
         </OptionsBar>
@@ -189,6 +197,16 @@ class Home extends Component {
             onError={this.props.onError}
           />
         }
+        {
+          page === '#messages' &&
+          <ChatPage
+            isOpen
+            messages={messages}
+            onToggleChat={this.handleToggleChat}
+            onSendChat={this.handleSendChat}
+            onResetUnseen={this.handleResetUnseen}
+          />
+        }
       </Wrapper>
     );
   }
@@ -200,6 +218,10 @@ const styles = ({
   },
   optionButton: {
     color: 'rgba(0, 0, 0, .4)'
+  },
+  badge: {
+    top: 8,
+    right: 8
   }
 })
 
