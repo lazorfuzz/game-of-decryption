@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import LioWebRTC from 'liowebrtc';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import MessageIcon from '@material-ui/icons/Message';
 import Tooltip from '@material-ui/core/Tooltip';
 import HomeIcon from '@material-ui/icons/Home';
 import PanoIcon from '@material-ui/icons/Photo';
@@ -12,6 +13,7 @@ import MemberArea from './MemberArea';
 import Decipher from './Decipher';
 import Organization from './Organization';
 import Settings from './Settings';
+import Chat from './Chat';
 import { getOrganization, currentUser } from '../../api';
 import './Home.css';
 
@@ -29,7 +31,8 @@ class Home extends Component {
       organization: null,
       online: [],
       onlineCount: 1,
-      messages: []
+      messages: [],
+      openChat: false
     };
   }
 
@@ -98,9 +101,30 @@ class Home extends Component {
     window.location.hash = page;
   }
 
+  handleToggleChat = () => {
+    const { openChat } = this.state;
+    this.setState({ openChat: !openChat });
+  }
+
+  handleSendChat = (message) => {
+    const { messages } = this.state;
+    const payload = {
+      sender: {
+        username: currentUser.username,
+        role: currentUser.role
+      },
+      message,
+      timestamp: new Date()
+    };
+    if (message.length > 1) {
+      this.webrtc.shout('chat', payload);
+      this.setState({ messages: [...messages, payload]});
+    }
+  }
+
   render() {
     const { classes } = this.props;
-    const { page, organization, online, onlineCount } = this.state;
+    const { page, organization, online, onlineCount, openChat, messages } = this.state;
     return (
       <Wrapper>
         <OptionsBar>
@@ -127,14 +151,20 @@ class Home extends Component {
           </Option>
           <Option>
             <Tooltip title="Settings">
-              <IconButton onClick={() => this.changePage('#settings')} classes={{ root: page === '#settings' ? classes.optionButtonSelected : classes.optionButton }}>
-                <SettingsIcon />
+              <IconButton onClick={() => window.innerWidth < 786 ? this.changePage('#messages') : this.handleToggleChat()} classes={{ root: page === '#messages' ? classes.optionButtonSelected : classes.optionButton }}>
+                <MessageIcon />
               </IconButton>
             </Tooltip>
           </Option>
         </OptionsBar>
+        <Chat
+          isOpen={openChat}
+          messages={messages}
+          onToggleChat={this.handleToggleChat}
+          onSendChat={this.handleSendChat}
+        />
         {
-          page === '#home' && <MemberArea />
+          page === '#home' && <MemberArea onChangePage={this.changePage} />
         }
         {
           page === '#decipher' && <Decipher onError={this.props.onError} />
@@ -194,7 +224,7 @@ const Wrapper = styled.div`
 
 const OptionsBar = styled.div`
   display: flex;
-  z-index: 5;
+  z-index: 15;
   transition: width 150ms ease-in;
   flex-flow: column;
   align-items: center;

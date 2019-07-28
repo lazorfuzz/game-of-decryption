@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import IconButton from '@material-ui/core/Fab';
+import SettingsIcon from '@material-ui/icons/Settings';
+import { withStyles } from '@material-ui/core/styles';
 import Card from '../../Card';
 import { getNews } from '../../../api';
 import { shortenText } from '../../../util';
 import Loading from '../../Loading';
-import { Title } from '../../Text';
+import Text, { Title } from '../../Text';
 import DesktopTabletView from '../../DesktopTabletView';
 import MobileView from '../../MobileView';
+import './MemberArea.css';
 
 /**
  * Member area page
@@ -51,11 +55,12 @@ class MemberArea extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     const { news, newsHeightOffset } = this.state;
     return (
       <Container className="main">
         <Title>News</Title>
-        <Card>
+        <Card className="newsCard">
           <NewsContainer onScroll={this.handleNewsScroll} heightOffset={newsHeightOffset}>
             {
               news.length > 0 ? this.generateNews() : (
@@ -64,10 +69,35 @@ class MemberArea extends Component {
             }
           </NewsContainer>
         </Card>
+        <Title>Dashboard</Title>
+        <Card>
+          <DashboardContainer>
+            <DashboardRow>
+              <Text>You have no new notifications.</Text>
+            </DashboardRow>
+            <DashboardRow className="dashboardOptions">
+              <IconButton
+                color="primary"
+                classes={{ root: classes.dashboardButton }}
+                onClick={() => this.props.onChangePage('#settings')}
+              >
+                <SettingsIcon />
+              </IconButton>
+            </DashboardRow>
+          </DashboardContainer>
+        </Card>
       </Container>
     );
   }
 }
+
+const styles = ({
+  dashboardButton: {
+    width: 64,
+    height: 64,
+    color: 'white'
+  }
+});
 
 const Container = styled.div`
   display: flex;
@@ -82,6 +112,16 @@ const NewsContainer = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1) 100ms;
+`;
+
+const DashboardContainer = styled.div`
+  display: flex;
+  flex-flow: column;
+  padding: 16px;
+`;
+
+const DashboardRow = styled.div`
+  display: flex;
 `;
 
 const NewsItem = styled.div`
@@ -118,4 +158,4 @@ const NewsTitle = styled.span`
 
 
 
-export default MemberArea;
+export default withStyles(styles)(MemberArea);
