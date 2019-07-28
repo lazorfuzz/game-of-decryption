@@ -53,7 +53,7 @@ class Home extends Component {
     this.webrtc.on('ready', this.joinRoom);
     this.webrtc.on('createdPeer', this.handlePeerChange);
     this.webrtc.on('removedPeer', this.handlePeerChange)
-    this.webrtc.on('receivedPeerData', this.handleReceivedPeerData);
+    this.webrtc.on('receivedSignalData', this.handleReceivedPeerData);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -121,7 +121,7 @@ class Home extends Component {
       timestamp: new Date()
     };
     if (message.length > 1) {
-      this.webrtc.shout('chat', payload);
+      this.webrtc.broadcast('chat', payload);
       this.setState({ messages: [...messages, payload]});
     }
   }
